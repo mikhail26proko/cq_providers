@@ -1,6 +1,8 @@
 <?php
 if (!session_id()) @session_start();
 
+include_once "autoload.php";
+
 header('Access-Control-Allow-Headers: *');
 header('Access-Control-Allow-Origin: *');
 header('Content-Type:application/json');
@@ -13,7 +15,16 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     exit;
 }
 
-    echo json_encode($inputDataParsed);
+$dfltClass  = "tran";
+$className  = $inputDataParsed['provider'];
+
+if (class_exists($className)){
+    $provider = new $className($inputDataParsed);    
+} else {
+    $provider = new $dfltClass($inputDataParsed);
+}
+
+    echo json_encode($provider->providerData);
     http_response_code(200);
 
 ?>
